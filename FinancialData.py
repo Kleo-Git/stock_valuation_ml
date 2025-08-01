@@ -13,33 +13,38 @@ import numpy as np
 #P/E, PEG, P/B, Dividend Yield, EPS, Revenue growth, Debt to equity, Return on equity /
 #Free cash flow, Net income margin.
 
-        
-def company_fundamental_data(company_name, time_duration, show_plot=False):
-    #Accessing data from yfinance
-    ticker = yf.Ticker(company_name)
-    #Finding the stock price over given time period
-    company_data = ticker.history(time_duration)
+class StockData:
+    def __init__(self, company_name, duration="1y", show_plot=False):
+        self.company_name = company_name
+        self.duration = duration
+        self.ticker = yf.Ticker(company_name)
+        self.price_data = self.ticker.history(duration)
+        self.fundamentals = self.fetch_fundamentals()
+        if show_plot:
+            self.plot_stock_price()
     
-    #Finding all company fundamentals and returning in form of an array
-    
-    #For now manual input of desired types of fundamental data
-    fundamental_data = ["trailingPE", "forwardPE", "trailingPegRatio", "priceToBook", "dividendYield"
-    , "trailingEps", "forwardEps", "revenueGrowth", "debtToEquity", "returnOnEquity",
-    "profitMargins"]
-    #Empty list to store data
-    company_fundamentals = []
-    for dataType in fundamental_data:
-        company_fundamentals.append(ticker.info.get(dataType, np.nan))
-    
-    #Can show plot for pricing if desired
-    if show_plot:
-        company_data["Close"].plot(title =  company_name + " Stock Price")
+    def plot_stock_price(self):
+        self.price_data["Close"].plot(title =  self.company_name + " Stock Price")
         plt.show()
-        
-    return dict(zip(fundamental_data, company_fundamentals))
-        
     
-print(company_fundamental_data("AAPL", "1y"))
+    def fetch_fundamentals(self):
+        fundamental_data = ["trailingPE", "forwardPE", "trailingPegRatio", "priceToBook", "dividendYield"
+        , "trailingEps", "forwardEps", "revenueGrowth", "debtToEquity", "returnOnEquity",
+        "profitMargins"]
+        
+        company_fundamentals = []
+        
+        for dataType in fundamental_data:
+            company_fundamentals.append(self.ticker.info.get(dataType, np.nan))
+            
+        return dict(zip(fundamental_data, company_fundamentals))
+    
+    def get_fundamentals(self):
+        return self.fundamentals
+    
+apple = StockData("AAPL")
+
+print(apple.get_fundamentals())
 
 
     
