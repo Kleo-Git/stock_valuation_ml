@@ -15,22 +15,17 @@ import numpy as np
 
 class StockData:
     #Intialize company with relevant data
-    def __init__(self, company_name, duration="1y", show_plot=False):
+    def __init__(self, company_name, duration="1y", day_range=50, show_plot=False):
         self.company_name = company_name
         self.duration = duration
+        self.day_range = day_range
         self.ticker = yf.Ticker(company_name)
         self.price_data = self.ticker.history(duration)
         #Auto run fetch fundamentals
         self.fundamentals = self.fetch_fundamentals()
         #Only show plot if wanted
         if show_plot:
-            self.plot_stock_price()
-    
-    #Function to plot stock price over duration
-    def plot_stock_price(self):
-        #Creates plot based on data from close prices
-        self.price_data["Close"].plot(title =  self.company_name + " Stock Price")
-        plt.show()
+            self.plot_stock_price_with_moving_average()
     
     def fetch_fundamentals(self):
         #List of fundamental data created manually for now
@@ -51,9 +46,39 @@ class StockData:
     def get_fundamentals(self):
         return self.fundamentals
     
-apple = StockData("AAPL")
+    #Function to calculate moving averages over a specific amount of days
+    def calculate_moving_averages(self):
+        #Find Close price for the trading day
+        close_prices = self.price_data["Close"]
+        #Efficient way to return moving average over given range
+        return close_prices.rolling(window=self.day_range).mean().dropna()
+            
+    #Function to plot stock price over duration and moving averages
+    def plot_stock_price_with_moving_average(self):
+        
+        #Plot stock price
+        self.price_data["Close"].plot(label="Stock Price")
+        
+        #Plot moving average
+        moving_avg = self.calculate_moving_averages()
+        moving_avg.plot(label=f"Moving {self.day_range} day average", color = "red", linestyle = "--")
+        
+        #Basic labelling of graph
+        plt.title(f"{self.company_name} Stock price")
+        plt.xlabel("Date")
+        plt.ylabel("Price")
+        plt.legend()
+        plt.show()        
+    
+    
+apple = StockData("AAPL", "1y", show_plot = True)
 
-print(apple.get_fundamentals())
+
+#print(apple.get_fundamentals())
+
+#movingaverages = price["Close"].rolling(window=50).mean().dropna().tolist()
+#More efficient way to calculate rolling average,look into
+
 
 
     
