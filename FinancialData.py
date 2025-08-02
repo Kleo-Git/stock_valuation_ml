@@ -70,13 +70,6 @@ class StockData:
         plt.legend()
         plt.show()        
     
-    
-apple = StockData("AAPL", "1y", show_plot = True)
-
-
-#print(apple.get_fundamentals())
-
-#movingaverages = price["Close"].rolling(window=50).mean().dropna().tolist()
 #More efficient way to calculate rolling average,look into
 
 
