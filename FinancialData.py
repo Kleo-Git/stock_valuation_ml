@@ -11,7 +11,7 @@ import numpy as np
 
 #Company fundamentals semi-arbitrarily chosen to be used currently:
 #P/E, PEG, P/B, Dividend Yield, EPS, Revenue growth, Debt to equity, Return on equity /
-#Free cash flow, Net income margin.
+#Free cash flow, Net income margin, Book value per share.
 
 class StockData:
     #Intialize company with relevant data
@@ -32,7 +32,7 @@ class StockData:
         #Currently list is fairly arbitrary, although all this data is useful
         fundamental_data = ["trailingPE", "forwardPE", "trailingPegRatio", "priceToBook", "dividendYield"
         , "trailingEps", "forwardEps", "revenueGrowth", "debtToEquity", "returnOnEquity",
-        "profitMargins"]
+        "profitMargins", "bookValue"]
         
         company_fundamentals = []
         #Find each type of fundamental data from above list
@@ -45,6 +45,12 @@ class StockData:
     #Return the fundamental data
     def get_fundamentals(self):
         return self.fundamentals
+    
+    def get_close_prices(self):
+        return self.price_data["Close"]
+    
+    def get_latest_price(self):
+        return self.price_data["Close"].iloc[-1]
     
     #Function to calculate moving averages over a specific amount of days
     def calculate_moving_averages(self):
@@ -70,8 +76,6 @@ class StockData:
         plt.legend()
         plt.show()        
     
-#More efficient way to calculate rolling average,look into
-
 
 
     
